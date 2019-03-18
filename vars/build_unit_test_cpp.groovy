@@ -63,7 +63,7 @@ def call(body) {
             }
             env.current_commit_hash = env.output
 
-            def (errorCode, output) = getLastCommitSummary()
+            (errorCode, output) = getLastCommitSummary()
             if (haveErrors(errorCode)) {
               echo "Failure running getLastCommitSummary ${errorCode}"
               currentBuild.result = 'FAILURE'
