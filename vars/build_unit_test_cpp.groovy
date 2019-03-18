@@ -41,7 +41,7 @@ def call(body) {
             checkout([
               $class: 'GitSCM', 
               branches: [[
-                name: "refs/heads/${branch}"
+                name: "refs/heads/${config.branch}"
               ]], 
               doGenerateSubmoduleConfigurations: false, 
               extensions: [], 
