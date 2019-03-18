@@ -13,13 +13,7 @@ def call(body) {
     label = ''
     branch = ''
     timeoutInHours = 4
-    developerBuild = false
-    forcedBuild = false
     recipients = ''
-    serverWIP = "nlyehvitrdnabv1.storage.philips.com"
-    serverPublish = "nlyehvitrdnabv1.storage.philips.com"
-    shareWIP = "igts_wip_storage"
-    sharePublish = "ixr_data_storage"
   }
   */
   def util =  new util(this)
@@ -46,7 +40,7 @@ def call(body) {
             checkout([
               $class: 'GitSCM', 
               branches: [[
-                name: 'refs/heads/master'
+                name: "refs/heads/${branch}"
               ]], 
               doGenerateSubmoduleConfigurations: false, 
               extensions: [], 
@@ -143,7 +137,7 @@ def call(body) {
             //     }
             //   }
             //   env.deploy_target_dir = env.deploy_target_dir.replace("/", "\\")
-            // }
+            }
           }
         }
       }
