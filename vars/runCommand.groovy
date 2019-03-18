@@ -11,5 +11,5 @@ def call(cmd) {
     echo "runCommand failed with exception: '${ex}'"
   }
   echo "runCommand: errorCode: ${errorCode} output: '${stdout}'"
-  return [errorCode, stdout]"
+  return [errorCode, stdout]
 }
