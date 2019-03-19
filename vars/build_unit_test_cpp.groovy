@@ -153,7 +153,7 @@ def call(body) {
     post {
       always {
         script {
-          sendNotification("${config.recipients}", currentBuild.result)
+          // sendNotification("${config.recipients}", currentBuild.result)
           // if (isDirectoryMounted(env.wip_mount_dir)) {
           //   echo "Unmount ${env.wip_mount_dir}"
           // }
