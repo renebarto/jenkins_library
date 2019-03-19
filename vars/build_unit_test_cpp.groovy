@@ -87,10 +87,10 @@ def call(body) {
             if (needToBuild()) {
               def (errorCode, output) = runCMake(build_dir, [
                 CMAKE_BUILD_TYPE: 'Debug',
-                CMAKE_EXPORT_COMPILE_COMMANDS: 'ON'
-                BUILD_UNIT_TESTS: 'ON'
-                MEASURE_COVERAGE: 'ON'
-                CMAKE_INSTALL_PREFIX: "${WORKSPACE}/install/usr"
+                CMAKE_EXPORT_COMPILE_COMMANDS: 'ON',
+                BUILD_UNIT_TESTS: 'ON',
+                MEASURE_COVERAGE: 'ON',
+                CMAKE_INSTALL_PREFIX: "${WORKSPACE}/install/usr",
               ])
               if (util.haveErrors()) {
                 echo "Failure building: ${env.errorCode}"
