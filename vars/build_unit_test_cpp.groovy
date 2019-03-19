@@ -92,7 +92,7 @@ def call(body) {
                 MEASURE_COVERAGE: 'ON',
                 CMAKE_INSTALL_PREFIX: "${WORKSPACE}/install/usr",
               ])
-              if (util.haveErrors()) {
+              if (haveErrors(errorCode)) {
                 echo "Failure building: ${env.errorCode}"
                 currentBuild.result = 'FAILURE'
               }
