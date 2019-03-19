@@ -1,6 +1,7 @@
 def call(String build_dir, Map parameters) {
   def parameterString = ""
-  parameters.each{ k, v -> parameterString= "${k}:${v} ${parameterString}" }
+  parameters.each{ k, v -> parameterString= "-D${k}=${v} ${parameterString}" }
+  parameterString = parameterString.trim()
   def (errorCode, output) = runCommand("cd ${build_dir}; cmake .. ${parameterString}")
   def assembledOutput = output
   if (haveErrors(errorCode)) {
