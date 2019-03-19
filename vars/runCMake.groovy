@@ -5,10 +5,11 @@ def call(String build_dir, Map parameters) {
 
   def commandFile = "command_.sh"
 
-  def (errorCode, output) = runCommand("echo \"pushd ${build_dir}\ncmake .. ${parameterString}\nmake clean\nmake\npopd\" > ${commandFile}")
+  def errorCode = runCommandNoOutput("echo \"pushd ${build_dir}\ncmake .. ${parameterString}\nmake clean\nmake\npopd\" > ${commandFile}")
   if (haveErrors(errorCode)) {
-    return [errorCode, output]
+    return [errorCode, ""]
   }
+  def output
   (errorCode, output) = makeExecutable(commandFile)
   if (haveErrors(errorCode)) {
     return [errorCode, output]
