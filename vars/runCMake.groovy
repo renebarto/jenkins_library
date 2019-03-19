@@ -3,24 +3,16 @@ def call(String build_dir, Map parameters) {
   parameters.each{ k, v -> parameterString= "-D${k}=${v} ${parameterString}" }
   parameterString = parameterString.trim()
 
-  def (errorCode, output) = getCurrentDir()
-  (errorCode, output) = runCommand("cd ${build_dir}")
-  (errorCode, output) = getCurrentDir()
+  def commandFile = "command_.sh"
+
+  def (errorCode, output) = runCommand("echo \"pushd ${build_dir}\ncmake .. ${parameterString}\nmake clean\nmake\npopd\" > ${commandFile}")
   if (haveErrors(errorCode)) {
-    return [errorCode, assembledOutput]
+    return [errorCode, output]
   }
-  def assembledOutput = ""
-  (errorCode, output) = runCommand("cd ${build_dir}; cmake .. ${parameterString}")
-  assembledOutput = "${assembledOutput}${output}"
+  def (errorCode, output) = makeExecutable(commandFile)
   if (haveErrors(errorCode)) {
-    return [errorCode, assembledOutput]
+    return [errorCode, output]
   }
-  (errorCode, output) = runCommand("cd ${build_dir}; make clean")
-  assembledOutput = "${assembledOutput}${output}"
-  if (haveErrors(errorCode)) {
-    return [errorCode, assembledOutput]
-  }
-  (errorCode, output) = runCommand("cd ${build_dir}; make")
-  assembledOutput = "${assembledOutput}${output}"
-  return [errorCode, assembledOutput]
+  (errorCode, output) = runCommand("${build_dir}")
+  return [errorCode, output]
 }
