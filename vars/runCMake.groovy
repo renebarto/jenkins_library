@@ -3,7 +3,7 @@ def call(String build_dir, Map parameters) {
   parameters.each{ k, v -> parameterString= "-D${k}=${v} ${parameterString}" }
   parameterString = parameterString.trim()
 
-  def commandFile = "command_.sh"
+  def commandFile = "${WORKSPACE}/command_.sh"
 
   def errorCode = runCommandNoOutput("echo \"pushd ${build_dir}\ncmake .. ${parameterString}\nmake clean\nmake\npopd\" > ${commandFile}")
   if (haveErrors(errorCode)) {
