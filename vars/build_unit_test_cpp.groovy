@@ -78,7 +78,7 @@ def call(body) {
           script {
             if (needToBuild()) {
               env.build_dir = "${WORKSPACE}/build"
-              def (errorCode, output) = makedir(env.build_dir)
+              def (errorCode, output) = makeDir(env.build_dir)
               if (haveErrors(errorCode)) {
                 echo "Failure creating directory ${env.build_dir}: ${errorCode}"
                 currentBuild.result = 'FAILURE'
