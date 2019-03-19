@@ -77,17 +77,26 @@ def call(body) {
         steps {
           script {
             if (needToBuild()) {
+              env.build_dir = "${WORKSPACE}/build"
+              def (errorCode, output) = makedir(env.build_dir)
+              if (haveErrors(errorCode)) {
+                echo "Failure creating directory ${env.build_dir}: ${errorCode}"
+                currentBuild.result = 'FAILURE'
+              }
             }
-            //   env.os_version_base="wrlinux-9"
-            //   env.os_version_extended="${env.os_version_base}_20181218154004904_21044"
-            //   if (util.needToBuild()) {
-            //     echo "./buildWRL9.sh ${WORKSPACE}/${env.os_version_base} /opt/WindRiver/${env.os_version_base}/${env.os_version_extended}/WRLinux-9-LTS-CVE/${env.os_version_base}"
-            //     runCommand("./buildWRL9.sh ${WORKSPACE}/${env.os_version_base} /opt/WindRiver/${env.os_version_base}/${env.os_version_extended}/WRLinux-9-LTS-CVE/${os_version_base}")
-            //     if (util.haveErrors()) {
-            //       echo "Failure running 'buildWRL9' ${env.errorCode}"
-            //       currentBuild.result = 'FAILURE'
-            //     }
-            // }
+            if (needToBuild()) {
+              def (errorCode, output) = runCMake(build_dir, [
+                CMAKE_BUILD_TYPE: 'Debug',
+                CMAKE_EXPORT_COMPILE_COMMANDS: 'ON'
+                BUILD_UNIT_TESTS: 'ON'
+                MEASURE_COVERAGE: 'ON'
+                CMAKE_INSTALL_PREFIX: "${WORKSPACE}/install/usr"
+              ])
+              if (util.haveErrors()) {
+                echo "Failure building: ${env.errorCode}"
+                currentBuild.result = 'FAILURE'
+              }
+            }
           }
         }
       }
