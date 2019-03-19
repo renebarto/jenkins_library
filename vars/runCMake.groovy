@@ -9,7 +9,7 @@ def call(String build_dir, Map parameters) {
   if (haveErrors(errorCode)) {
     return [errorCode, output]
   }
-  def (errorCode, output) = makeExecutable(commandFile)
+  (errorCode, output) = makeExecutable(commandFile)
   if (haveErrors(errorCode)) {
     return [errorCode, output]
   }
