@@ -1,3 +1,3 @@
-def call(erroCode) {
+def call(errorCode) {
   return errorCode != 0
 }
