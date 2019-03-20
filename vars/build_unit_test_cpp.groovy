@@ -137,6 +137,23 @@ def call(body) {
           }
         }
       }
+      stage('Report static analysis results') {
+        steps {
+          script {
+            if (needToBuild()) {
+              publishIssues(
+                issues: [], 
+                qualityGates: [[
+                  threshold: 1, 
+                  type: 'TOTAL', 
+                  unstable: false
+                ]], 
+                referenceJobName: 'unit-test-cpp'
+              )
+            }
+          }
+        }
+      }
       stage('Report test results') {
         steps {
           script {
