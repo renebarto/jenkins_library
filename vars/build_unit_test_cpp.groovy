@@ -112,6 +112,7 @@ def call(body) {
         steps {
           script {
             if (needToBuild()) {
+              runTests("${WORKSPACE}/output/debug/bin/unittest-cpp.test", "${WORKSPACE}/test-results", "unittest-cpp.test.xml")
             }
           }
         }
