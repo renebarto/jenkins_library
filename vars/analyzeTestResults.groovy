@@ -4,7 +4,8 @@ def call(String resultsDir) {
       failed(
         failureThreshold: '0', 
         unstableThreshold: '0'
-    )], 
+      )
+    ], 
     tools: [
       UnitTest(
         deleteOutputFiles: true, 
@@ -12,7 +13,8 @@ def call(String resultsDir) {
         pattern: "${resultsDir}/**/*.xml", 
         skipNoTestFiles: false, 
         stopProcessingIfError: true
-    )]
+      )
+    ]
   )
   return true
 }

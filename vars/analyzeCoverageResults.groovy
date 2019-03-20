@@ -1,5 +1,5 @@
 def call(String resultsDir) {
-  cobertura 
+  cobertura(
     autoUpdateHealth: false, 
     autoUpdateStability: false, 
     coberturaReportFile: "${resultsDir}/gcovr.xml", 
@@ -12,5 +12,6 @@ def call(String resultsDir) {
     onlyStable: false, 
     sourceEncoding: 'ASCII', 
     zoomCoverageChart: false
+  )
   return true
 }

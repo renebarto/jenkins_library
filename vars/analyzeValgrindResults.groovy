@@ -1,5 +1,5 @@
 def call(String resultsDir) {
-  xunit 
+  xunit(
     thresholds: [
       failed(
         failureThreshold: '0', 
@@ -15,5 +15,6 @@ def call(String resultsDir) {
         stopProcessingIfError: true
       )
     ]
+  )
   return true
 }
