@@ -73,6 +73,15 @@ def call(body) {
           }
         }
       }
+      stage('Static analysis') {
+        steps {
+          script {
+            if (needToBuild()) {
+              runCppCheck("${WORKSPACE}/cppcheck-results", "cppcheck.xml")
+            }
+          }
+        }
+      }
       stage('Build') {
         steps {
           script {
@@ -114,6 +123,15 @@ def call(body) {
           script {
             if (needToBuild()) {
               processCoverage("${WORKSPACE}/gcov-results", "gcovr.xml")
+            }
+          }
+        }
+      }
+      stage('Dynamic analysis') {
+        steps {
+          script {
+            if (needToBuild()) {
+              runValgrind("${WORKSPACE}/output/debug/bin/unittest-cpp.test", "${WORKSPACE}/valgrind-results", "all-tests.test.xml")
             }
           }
         }
