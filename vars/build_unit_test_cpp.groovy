@@ -136,6 +136,33 @@ def call(body) {
           }
         }
       }
+      stage('Report test results') {
+        steps {
+          script {
+            if (needToBuild()) {
+              analyzeTestResults("${WORKSPACE}/test-results")
+            }
+          }
+        }
+      }
+      stage('Report coverage results') {
+        steps {
+          script {
+            if (needToBuild()) {
+              analyzeCoverageResults("${WORKSPACE}/gcov-results")
+            }
+          }
+        }
+      }
+      stage('Report dynamic analysis results') {
+        steps {
+          script {
+            if (needToBuild()) {
+              analyzeValgrindResults("${WORKSPACE}/valgrind-results")
+            }
+          }
+        }
+      }
       stage('Deploy') {
         steps {
           script {
