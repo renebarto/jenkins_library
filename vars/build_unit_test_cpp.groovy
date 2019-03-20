@@ -100,19 +100,20 @@ def call(body) {
           }
         }
       }
-      stage('Stage') {
-        steps {
-          script {
-            if (needToBuild()) {
-            }
-          }
-        }
-      }
       stage('Test') {
         steps {
           script {
             if (needToBuild()) {
               runTests("${WORKSPACE}/output/debug/bin/unittest-cpp.test", "${WORKSPACE}/test-results", "unittest-cpp.test.xml")
+            }
+          }
+        }
+      }
+      stage('Process coverage') {
+        steps {
+          script {
+            if (needToBuild()) {
+              processCoverage("${WORKSPACE}/gcov-results", "gcovr.xml")
             }
           }
         }
