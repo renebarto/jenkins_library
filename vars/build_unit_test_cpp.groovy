@@ -141,14 +141,14 @@ def call(body) {
         steps {
           script {
             if (needToBuild()) {
-              scanForIssues(
+              def cppcheckIssues = scanForIssues(
                 sourceCodeEncoding: 'US-ASCII', 
                 tool: cppCheck(
                   pattern: 'cppcheck-results/**/*.xml', reportEncoding: 'US-ASCII'
                 )
               )
               publishIssues(
-                issues: [], 
+                issues: [cppcheckIssues], 
                 qualityGates: [[
                   threshold: 1, 
                   type: 'TOTAL', 
