@@ -62,7 +62,8 @@ def call(body) {
               echo "Failure running getCommitHash ${errorCode}"
               currentBuild.result = 'FAILURE'
             }
-            env.current_commit_hash = env.output
+            env.current_commit_hash = output
+            env.buildID = "${env.current_commit_hash}_${env.timestamp}_${currentBuild.number}"
 
             (errorCode, output) = getLastCommitSummary()
             if (haveErrors(errorCode)) {
@@ -140,7 +141,7 @@ def call(body) {
         steps {
           script {
             if (needToBuild()) {
-              analyzeTestResults("${WORKSPACE}/test-results")
+              analyzeTestResults("test-results")
             }
           }
         }
@@ -149,7 +150,7 @@ def call(body) {
         steps {
           script {
             if (needToBuild()) {
-              analyzeCoverageResults("${WORKSPACE}/gcov-results")
+              analyzeCoverageResults("gcov-results")
             }
           }
         }
@@ -158,7 +159,7 @@ def call(body) {
         steps {
           script {
             if (needToBuild()) {
-              analyzeValgrindResults("${WORKSPACE}/valgrind-results")
+              analyzeValgrindResults("valgrind-results")
             }
           }
         }
