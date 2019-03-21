@@ -103,6 +103,7 @@ def call(body) {
                 MEASURE_COVERAGE: 'ON',
                 LOCAL_BUILD: 'ON',
                 SCRIPTS_DIR: '/home/rene/cmake-scripts'
+              ])
               if (haveErrors(errorCode)) {
                 echo "Failure building: ${env.errorCode}"
                 currentBuild.result = 'FAILURE'
