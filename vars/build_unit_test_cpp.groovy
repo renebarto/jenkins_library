@@ -100,7 +100,7 @@ def call(body) {
                 CMAKE_EXPORT_COMPILE_COMMANDS: 'ON',
                 BUILD_UNIT_TESTS: 'ON',
                 MEASURE_COVERAGE: 'ON',
-                CMAKE_INSTALL_PREFIX: "${WORKSPACE}/install/usr",
+                CMAKE_INSTALL_PREFIX: "/home/rene/install/usr",
               ])
               if (haveErrors(errorCode)) {
                 echo "Failure building: ${env.errorCode}"

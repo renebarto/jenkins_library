@@ -47,7 +47,7 @@ def call(body) {
               extensions: [], 
               submoduleCfg: [], 
               userRemoteConfigs: [[
-                url: 'https://github.com/renebarto/unittest-cpp/'
+                url: 'https://github.com/renebarto/multi-platform/'
               ]]
             ])
           }
@@ -97,11 +97,12 @@ def call(body) {
             if (needToBuild()) {
               def (errorCode, output) = runCMake(build_dir, [
                 CMAKE_BUILD_TYPE: 'Debug',
+                CMAKE_INSTALL_PREFIX: "/home/rene/install/usr",
                 CMAKE_EXPORT_COMPILE_COMMANDS: 'ON',
                 BUILD_UNIT_TESTS: 'ON',
                 MEASURE_COVERAGE: 'ON',
-                CMAKE_INSTALL_PREFIX: "${WORKSPACE}/install/usr",
-              ])
+                LOCAL_BUILD: 'ON',
+                SCRIPTS_DIR: '/home/rene/cmake-scripts'
               if (haveErrors(errorCode)) {
                 echo "Failure building: ${env.errorCode}"
                 currentBuild.result = 'FAILURE'
@@ -114,7 +115,7 @@ def call(body) {
         steps {
           script {
             if (needToBuild()) {
-              runTests("${WORKSPACE}/output/debug/bin/unittest-cpp.test", "${WORKSPACE}/test-results", "unittest-cpp.test.xml")
+              runTests("${WORKSPACE}/output/debug/bin/run-all-tests --xmloutput ", "${WORKSPACE}/test-results", "unittest-cpp.test.xml")
             }
           }
         }
