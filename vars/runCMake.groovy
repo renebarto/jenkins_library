@@ -13,5 +13,5 @@ def call(String build_dir, Map parameters) {
   if (haveErrors(errorCode)) {
     return errorCode
   }
-  return = runCommand("${commandFile}")
+  return runCommand("${commandFile}")
 }
