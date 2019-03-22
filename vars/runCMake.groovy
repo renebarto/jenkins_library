@@ -19,7 +19,7 @@ def call(String build_dir, Map parameters, List makeCommands) {
   def makeCommandsString = ""
   makeCommands.each{ makeCommandsString = "${makeCommandsString}\n$it" }
 
-  errorCode = runCommand("echo \"pushd ${build_dir}\ncmake .. ${parameterString}${makeCommandsString}\npopd\" > ${commandFile}")
+  errorCode = runCommand("#!/bin/bash\nset -e\necho \"pushd ${build_dir}\ncmake .. ${parameterString}${makeCommandsString}\npopd\" > ${commandFile}")
   if (haveErrors(errorCode)) {
     return errorCode
   }
