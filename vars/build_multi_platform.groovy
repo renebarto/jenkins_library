@@ -142,7 +142,7 @@ def call(body) {
         steps {
           script {
             if (needToBuild()) {
-              runValgrind("${WORKSPACE}/output/debug/bin/unittest-cpp.test", "${WORKSPACE}/valgrind-results", "all-tests.test.xml")
+              runValgrind("${WORKSPACE}/output/debug/bin/run-all-tests", "${WORKSPACE}/valgrind-results", "all-tests.test.xml")
             }
           }
         }
