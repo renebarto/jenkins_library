@@ -1,4 +1,4 @@
-def call(String resultsDir, String resultsFile) {
+def call(String[] options, String resultsDir, String resultsFile) {
   def (errorCode, output) = makeDir(resultsDir)
   def accumulatedOutput = output
   if (haveErrors(errorCode)) {
@@ -9,9 +9,13 @@ def call(String resultsDir, String resultsFile) {
   if (haveErrors(errorCode)) {
     return [errorCode, accumulatedOutput]
   }
+  def parameterString = ""
+  directories.each{ d -> parameterString= "${parameterString}${d} " }
+  parameterString = parameterString.trim()
+
   def outfile = "stdout.out"
   try {
-    errorCode = sh(returnStatus: true, script: "cppcheck --enable=warning,performance,portability,style --language=c++ --xml-version=2 --inline-suppr include src test  >${outfile} 2>${resultsDir}/${resultsFile}")
+    errorCode = sh(returnStatus: true, script: "cppcheck ${parameterString} >${outfile} 2>${resultsDir}/${resultsFile}")
     output = readFile(outfile).trim()
   }
   catch (Exception ex) {

@@ -78,7 +78,17 @@ def call(body) {
         steps {
           script {
             if (needToBuild()) {
-              runCppCheck("${WORKSPACE}/cppcheck-results", "cppcheck.xml")
+              runCppCheck(
+                [
+                  '--enable=warning,performance,portability,style',
+                  '--language=c++',
+                  '--xml-version=2',
+                  '--inline-suppr',
+                  'include',
+                  'src',
+                  'test'
+                ],
+                "${WORKSPACE}/cppcheck-results", "cppcheck.xml")
             }
           }
         }
