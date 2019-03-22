@@ -1,4 +1,4 @@
-def call(String[] options, String resultsDir, String resultsFile) {
+def call(List options, String resultsDir, String resultsFile) {
   def (errorCode, output) = makeDir(resultsDir)
   def accumulatedOutput = output
   if (haveErrors(errorCode)) {
