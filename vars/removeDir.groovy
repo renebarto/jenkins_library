@@ -1,3 +1,3 @@
 def call(String path) {
-  return runCommand("mrm -rf ${path}")
+  return runCommand("rm -rf ${path}")
 }
