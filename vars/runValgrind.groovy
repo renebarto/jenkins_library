@@ -7,5 +7,5 @@ def call(String executable, String resultsDir, String resultsFile) {
   if (haveErrors(errorCode)) {
     return errorCode
   }
-  return runCommand("valgrind --suppressions=valgrind.supp --xml=yes --xml-file=${resultsDir}/${resultsFile} '${executable} --xml ${resultsDir}/test-output.xml'")
+  return runCommand("valgrind --suppressions=valgrind.supp --xml=yes --xml-file=${resultsDir}/${resultsFile} ${executable}")
 }
