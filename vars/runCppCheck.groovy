@@ -10,7 +10,7 @@ def call(List options, String resultsDir, String resultsFile) {
     return [errorCode, accumulatedOutput]
   }
   def parameterString = ""
-  directories.each{ parameterString= "${parameterString}$it " }
+  options.each{ parameterString= "${parameterString}$it " }
   parameterString = parameterString.trim()
 
   def outfile = "stdout.out"
