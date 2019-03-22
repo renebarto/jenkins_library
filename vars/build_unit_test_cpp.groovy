@@ -214,6 +214,22 @@ def call(body) {
                 currentBuild.result = 'FAILURE'
               }
             }
+            if (needToBuild()) {
+              archiveArtifacts '*.deb'
+            }
+            removeDir("html")
+            makeDir("html")
+
+            runCommand("echo <!DOCTYPE html> >> html/index.html")
+            runCommand("echo <html lang=\"en\"> >> html/index.html")
+            runCommand("echo <head> >> html/index.html")
+            runCommand("echo <meta charset=\"utf-8\"> >> html/index.html")
+            runCommand("echo <title>title</title> >> html/index.html")
+            runCommand("echo </head> >> html/index.html")
+            runCommand("echo <body> >> html/index.html")
+            runCommand("echo Hello >> html/index.html")
+            runCommand("echo </body> >> html/index.html")
+            runCommand("echo </html> >> html/index.html")
           }
         }
       }
