@@ -230,6 +230,18 @@ def call(body) {
             runCommand("echo Hello >> html/index.html")
             runCommand("echo </body> >> html/index.html")
             runCommand("echo </html> >> html/index.html")
+
+            publishHTML(
+              [
+                allowMissing: false, 
+                alwaysLinkToLastBuild: false, 
+                keepAll: false, 
+                reportDir: 'html/', 
+                reportFiles: 'index.html', 
+                reportName: 'HTML Report', 
+                reportTitles: ''
+              ]
+            )
           }
         }
       }
