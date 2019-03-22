@@ -8,7 +8,7 @@ def call(List options, String resultsDir, String resultsFile) {
     return errorCode
   }
   def parameterString = ""
-  options.each{ parameterString= "${parameterString}$it " }
+  options.each{ parameterString = "${parameterString}$it " }
   parameterString = parameterString.trim()
 
   return runCommand("cppcheck ${parameterString} 2>${resultsDir}/${resultsFile}")

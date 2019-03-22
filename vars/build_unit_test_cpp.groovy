@@ -98,19 +98,16 @@ def call(body) {
           script {
             if (needToBuild()) {
               env.build_dir = "${WORKSPACE}/build"
-              def errorCode = makeDir(env.build_dir)
-              if (haveErrors(errorCode)) {
-                echo "Failure creating directory ${env.build_dir}: ${errorCode}"
-                currentBuild.result = 'FAILURE'
-              }
-            }
-            if (needToBuild()) {
-              def errorCode = runCMake(build_dir, [
+              def errorCode = runCMake(env.build_dir, [
                 CMAKE_BUILD_TYPE: 'Debug',
                 CMAKE_EXPORT_COMPILE_COMMANDS: 'ON',
                 BUILD_UNIT_TESTS: 'ON',
                 MEASURE_COVERAGE: 'ON',
                 CMAKE_INSTALL_PREFIX: "/home/rene/install/usr",
+              ],
+              [
+                "make clean",
+                "make"
               ])
               if (haveErrors(errorCode)) {
                 echo "Failure building: ${env.errorCode}"
@@ -201,33 +198,21 @@ def call(body) {
         steps {
           script {
             if (needToBuild()) {
-            //   env.deploy_target_dir = ""
-            //   if (config.developerBuild) {
-            //     env.deploy_dir = "${env.wip_mount_dir}/DevBuilds/FDCSIB_OS/DTC_OS_Zynq_platform_WRL9_PreInt/${env.buildID}"
-            //     env.deploy_target_dir = "${env.wip_dir}/DevBuilds/FDCSIB_OS/DTC_OS_Zynq_platform_WRL9_PreInt/${env.buildID}"
-            //     env.errorCode = deployResultsToWIP('wrlinux-9/results')
-            //     if (util.haveErrors()) {
-            //       echo "Failure running deployResultsToWIP ${env.errorCode}"
-            //       currentBuild.result = 'FAILURE'
-            //     }
-            //   } else {
-            //     env.deploy_dir = "${env.wip_mount_dir}/CIBuilds/FDCSIB_OS/DTC_OS_Zynq_platform_WRL9_PreInt/${env.buildID}"
-            //     env.deploy_target_dir = "${env.wip_dir}/CIBuilds/FDCSIB_OS/DTC_OS_Zynq_platform_WRL9_PreInt/${env.buildID}"
-            //     env.errorCode = deployResultsToWIP('wrlinux-9/results')
-            //     if (util.haveErrors()) {
-            //       echo "Failure running deployResultsToWIP ${env.errorCode}"
-            //       currentBuild.result = 'FAILURE'
-            //     } else {
-            //       if (env.nextBaseline != env.currentBaseline) {
-            //         createTag("${env.nextBaseline}")
-            //         if (util.haveErrors()) {
-            //           echo "Failure running createTag ${env.errorCode}"
-            //           currentBuild.result = 'FAILURE'
-            //         }
-            //       }
-            //     }
-            //   }
-            //   env.deploy_target_dir = env.deploy_target_dir.replace("/", "\\")
+              def errorCode = runCMake(build_dir, [
+                CMAKE_BUILD_TYPE: 'Release',
+                CMAKE_INSTALL_PREFIX: "/home/rene/install/usr",
+                CMAKE_EXPORT_COMPILE_COMMANDS: 'ON',
+                BUILD_UNIT_TESTS: 'ON',
+              ],
+              [
+                "make clean",
+                "make",
+                "make dpkg"
+              ])
+              if (haveErrors(errorCode)) {
+                echo "Failure building: ${env.errorCode}"
+                currentBuild.result = 'FAILURE'
+              }
             }
           }
         }
