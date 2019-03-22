@@ -11,5 +11,5 @@ def call(List options, String resultsDir, String resultsFile) {
   options.each{ parameterString= "${parameterString}$it " }
   parameterString = parameterString.trim()
 
-  reutrn runCommand("cppcheck ${parameterString} 2>${resultsDir}/${resultsFile}")
+  return runCommand("cppcheck ${parameterString} 2>${resultsDir}/${resultsFile}")
 }
