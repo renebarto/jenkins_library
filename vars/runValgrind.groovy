@@ -1,15 +1,11 @@
 def call(String executable, String resultsDir, String resultsFile) {
-  def (errorCode, output) = makeDir(resultsDir)
-  def accumulatedOutput = output
+  def errorCode = makeDir(resultsDir)
   if (haveErrors(errorCode)) {
-    return [errorCode, accumulatedOutput]
+    return errorCode
   }
-  (errorCode, output) = runCommand("rm -rf ${resultsDir}/*")
-  accumulatedOutput = "${accumulatedOutput}${output}"
+  errorCode = runCommand("rm -rf ${resultsDir}/*")
   if (haveErrors(errorCode)) {
-    return [errorCode, accumulatedOutput]
+    return errorCode
   }
-  (errorCode, output) = runCommand("valgrind --suppressions=valgrind.supp --xml=yes --xml-file=${resultsDir}/${resultsFile} ${executable}")
-  accumulatedOutput = "${accumulatedOutput}${output}"
-  return [errorCode, accumulatedOutput]
+  return runCommand("valgrind --suppressions=valgrind.supp --xml=yes --xml-file=${resultsDir}/${resultsFile} ${executable}")
 }

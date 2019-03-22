@@ -96,14 +96,14 @@ def call(body) {
           script {
             if (needToBuild()) {
               env.build_dir = "${WORKSPACE}/build"
-              def (errorCode, output) = makeDir(env.build_dir)
+              def errorCode = makeDir(env.build_dir)
               if (haveErrors(errorCode)) {
                 echo "Failure creating directory ${env.build_dir}: ${errorCode}"
                 currentBuild.result = 'FAILURE'
               }
             }
             if (needToBuild()) {
-              def (errorCode, output) = runCMake(build_dir, [
+              def errorCode = runCMake(build_dir, [
                 CMAKE_BUILD_TYPE: 'Debug',
                 CMAKE_INSTALL_PREFIX: "/home/rene/install/usr",
                 CMAKE_EXPORT_COMPILE_COMMANDS: 'ON',

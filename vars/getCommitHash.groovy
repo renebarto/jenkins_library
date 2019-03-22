@@ -1,3 +1,3 @@
 def call(branch) {
-  return runCommand("git rev-parse ${branch}")
+  return runCommandCapture("git rev-parse ${branch}")
 }

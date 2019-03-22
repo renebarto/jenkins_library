@@ -1,3 +1,4 @@
 def call() {
-  return runCommand("pwd")
+  def (errorCode, output) = runCommandCapture("pwd")
+  return haveErrors(errorCode) ? "" : output
 }

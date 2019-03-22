@@ -1,15 +1,11 @@
 def call(String resultsDir, String resultsFile) {
-  def (errorCode, output) = makeDir(resultsDir)
-  def accumulatedOutput = output
+  def errorCode = makeDir(resultsDir)
   if (haveErrors(errorCode)) {
-    return [errorCode, accumulatedOutput]
+    return errorCode
   }
-  (errorCode, output) = runCommand("rm -rf ${resultsDir}/*")
-  accumulatedOutput = "${accumulatedOutput}${output}"
+  errorCode = runCommand("rm -rf ${resultsDir}/*")
   if (haveErrors(errorCode)) {
-    return [errorCode, accumulatedOutput]
+    return errorCode
   }
-  (errorCode, output) = runCommand("gcovr --xml --xml-pretty --output=${resultsDir}/${resultsFile} -r .")
-  accumulatedOutput = "${accumulatedOutput}${output}"
-  return [errorCode, accumulatedOutput]
+  return runCommand("gcovr --xml --xml-pretty --output=${resultsDir}/${resultsFile} -r .")
 }

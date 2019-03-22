@@ -1,26 +1,15 @@
 def call(List options, String resultsDir, String resultsFile) {
-  def (errorCode, output) = makeDir(resultsDir)
-  def accumulatedOutput = output
+  def errorCode = makeDir(resultsDir)
   if (haveErrors(errorCode)) {
-    return [errorCode, accumulatedOutput]
+    return errorCode
   }
-  (errorCode, output) = runCommand("rm -rf ${resultsDir}/*")
-  accumulatedOutput = "${accumulatedOutput}${output}"
+  errorCode = runCommand("rm -rf ${resultsDir}/*")
   if (haveErrors(errorCode)) {
-    return [errorCode, accumulatedOutput]
+    return errorCode
   }
   def parameterString = ""
   options.each{ parameterString= "${parameterString}$it " }
   parameterString = parameterString.trim()
 
-  def outfile = "stdout.out"
-  try {
-    errorCode = sh(returnStatus: true, script: "cppcheck ${parameterString} >${outfile} 2>${resultsDir}/${resultsFile}")
-    output = readFile(outfile).trim()
-  }
-  catch (Exception ex) {
-    echo "runCommand failed with exception: '${ex}'"
-  }
-  accumulatedOutput = "${accumulatedOutput}${output}"
-  return [errorCode, accumulatedOutput]
+  reutrn runCommand("cppcheck ${parameterString} 2>${resultsDir}/${resultsFile}")
 }
