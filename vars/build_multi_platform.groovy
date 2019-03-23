@@ -145,7 +145,7 @@ def call(body) {
         steps {
           script {
             if (needToBuild()) {
-              runTests("${WORKSPACE}/output/debug/bin/run-all-tests --xmloutput ", "${WORKSPACE}/test-results", "unittest-cpp.test.xml")
+              runTests("${WORKSPACE}/output/debug/bin/run-all-tests", "${WORKSPACE}/test-results", "unittest-cpp.test.xml")
             }
           }
         }
