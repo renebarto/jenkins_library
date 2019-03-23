@@ -100,7 +100,8 @@ def call(body) {
               def cppcheckIssues = scanForIssues(
                 sourceCodeEncoding: 'US-ASCII', 
                 tool: cppCheck(
-                  pattern: 'cppcheck-results/**/*.xml', reportEncoding: 'US-ASCII'
+                  pattern: 'cppcheck-results/**/*.xml', 
+                  reportEncoding: 'US-ASCII'
                 )
               )
               publishIssues(

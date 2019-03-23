@@ -98,18 +98,19 @@ def call(body) {
               def cppcheckIssues = scanForIssues(
                 sourceCodeEncoding: 'US-ASCII', 
                 tool: cppCheck(
-                  pattern: 'cppcheck-results/**/*.xml', reportEncoding: 'US-ASCII'
+                  pattern: 'cppcheck-results/**/*.xml', 
+                  reportEncoding: 'US-ASCII'
                 )
               )
-              publishIssues(
-                issues: [cppcheckIssues], 
-                qualityGates: [[
-                  threshold: 1, 
-                  type: 'TOTAL', 
-                  unstable: false
-                ]], 
-                referenceJobName: 'unit-test-cpp'
-              )
+              // publishIssues(
+              //   issues: [cppcheckIssues], 
+              //   qualityGates: [[
+              //     threshold: 1, 
+              //     type: 'TOTAL', 
+              //     unstable: false
+              //   ]], 
+              //   referenceJobName: 'unit-test-cpp'
+              // )
             }
           }
         }
