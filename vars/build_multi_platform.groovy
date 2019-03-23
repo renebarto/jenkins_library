@@ -91,6 +91,29 @@ def call(body) {
           }
         }
       }
+      stage('Report static analysis results') {
+        steps {
+          script {
+            if (needToBuild()) {
+              def cppcheckIssues = scanForIssues(
+                sourceCodeEncoding: 'US-ASCII', 
+                tool: cppCheck(
+                  pattern: 'cppcheck-results/**/*.xml', reportEncoding: 'US-ASCII'
+                )
+              )
+              publishIssues(
+                issues: [cppcheckIssues], 
+                qualityGates: [[
+                  threshold: 1, 
+                  type: 'TOTAL', 
+                  unstable: false
+                ]], 
+                referenceJobName: 'unit-test-cpp'
+              )
+            }
+          }
+        }
+      }
       stage('Build') {
         steps {
           script {
@@ -126,47 +149,6 @@ def call(body) {
           }
         }
       }
-      stage('Process coverage') {
-        steps {
-          script {
-            if (needToBuild()) {
-              processCoverage("${WORKSPACE}/gcov-results", "gcovr.xml")
-            }
-          }
-        }
-      }
-      stage('Dynamic analysis') {
-        steps {
-          script {
-            if (needToBuild()) {
-              runValgrind("${WORKSPACE}/output/debug/bin/run-all-tests", "${WORKSPACE}/valgrind-results", "all-tests.test.xml")
-            }
-          }
-        }
-      }
-      stage('Report static analysis results') {
-        steps {
-          script {
-            if (needToBuild()) {
-              def cppcheckIssues = scanForIssues(
-                sourceCodeEncoding: 'US-ASCII', 
-                tool: cppCheck(
-                  pattern: 'cppcheck-results/**/*.xml', reportEncoding: 'US-ASCII'
-                )
-              )
-              publishIssues(
-                issues: [cppcheckIssues], 
-                qualityGates: [[
-                  threshold: 1, 
-                  type: 'TOTAL', 
-                  unstable: false
-                ]], 
-                referenceJobName: 'unit-test-cpp'
-              )
-            }
-          }
-        }
-      }
       stage('Report test results') {
         steps {
           script {
@@ -176,11 +158,29 @@ def call(body) {
           }
         }
       }
+      stage('Process coverage') {
+        steps {
+          script {
+            if (needToBuild()) {
+              processCoverage("${WORKSPACE}/gcov-results", "gcovr.xml")
+            }
+          }
+        }
+      }
       stage('Report coverage results') {
         steps {
           script {
             if (needToBuild()) {
               analyzeCoverageResults("gcov-results")
+            }
+          }
+        }
+      }
+      stage('Dynamic analysis') {
+        steps {
+          script {
+            if (needToBuild()) {
+              runValgrind("${WORKSPACE}/output/debug/bin/run-all-tests", "${WORKSPACE}/valgrind-results", "all-tests.test.xml")
             }
           }
         }
