@@ -95,7 +95,8 @@ def call(body) {
         steps {
           script {
             if (needToBuild()) {
-              def errorCode = runCMake(build_dir, [
+              env.build_dir = "${WORKSPACE}/build"
+              def errorCode = runCMake(env.build_dir, [
                 CMAKE_BUILD_TYPE: 'Debug',
                 CMAKE_INSTALL_PREFIX: "/home/rene/install/usr",
                 CMAKE_EXPORT_COMPILE_COMMANDS: 'ON',
