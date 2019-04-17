@@ -1,4 +1,4 @@
-def call(String build_dir, Map parameters, List makeCommands) {
+def call(String build_dir, Map parameters, String generator, List makeCommands) {
   def errorCode = removeDir(build_dir)
   if (haveErrors(errorCode)) {
     echo "Failure removing directory ${build_dir}: ${errorCode}"
@@ -16,7 +16,7 @@ def call(String build_dir, Map parameters, List makeCommands) {
 
   def commandFile = "${WORKSPACE}/command_.sh"
 
-  def makeCommandsString = ""
+  def makeCommandsString = "-G$\'{generator}\'' "
   makeCommands.each{ makeCommandsString = "${makeCommandsString}\n$it" }
 
   errorCode = runCommand("#!/bin/bash\nset -e\necho \"pushd ${build_dir}\ncmake .. ${parameterString}${makeCommandsString}\npopd\" > ${commandFile}")

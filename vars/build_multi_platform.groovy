@@ -14,6 +14,7 @@ def call(body) {
     branch = ''
     timeoutInHours = 4
     recipients = ''
+    with_ninja = false    // Build with Ninja
   }
   */
   def util =  new util(this)
@@ -35,6 +36,16 @@ def call(body) {
       errorCode = 0
     }
     stages {
+      stage('Validate parameters') {
+        steps {
+          script {
+            env.with_ninja = config.with_ninja
+            if ((config.with_ninja == null) || (config.with_ninja == "")) {
+              env.with_ninja = "false"
+            }
+          }
+        }
+      }
       stage('Checkout') {
         steps {
           script {
@@ -102,15 +113,15 @@ def call(body) {
                   reportEncoding: 'US-ASCII'
                 )
               )
-              // publishIssues(
-              //   issues: [cppcheckIssues], 
-              //   qualityGates: [[
-              //     threshold: 1, 
-              //     type: 'TOTAL', 
-              //     unstable: false
-              //   ]], 
-              //   referenceJobName: 'unit-test-cpp'
-              // )
+              publishIssues(
+                issues: [cppcheckIssues], 
+                qualityGates: [[
+                  threshold: 1, 
+                  type: 'TOTAL', 
+                  unstable: false
+                ]], 
+                referenceJobName: 'unit-test-cpp'
+              )
             }
           }
         }
@@ -120,22 +131,44 @@ def call(body) {
           script {
             if (needToBuild()) {
               env.build_dir = "${WORKSPACE}/build"
-              def errorCode = runCMake(env.build_dir, [
-                CMAKE_BUILD_TYPE: 'Debug',
-                CMAKE_INSTALL_PREFIX: "/home/rene/install/usr",
-                CMAKE_EXPORT_COMPILE_COMMANDS: 'ON',
-                BUILD_UNIT_TESTS: 'ON',
-                MEASURE_COVERAGE: 'ON',
-                LOCAL_BUILD: 'ON',
-                SCRIPTS_DIR: '/home/rene/cmake-scripts'
-              ],
-              [
-                "make clean",
-                "make"
-              ])
-              if (haveErrors(errorCode)) {
-                echo "Failure building: ${env.errorCode}"
-                currentBuild.result = 'FAILURE'
+              if (env.with_ninja == "true") {
+                def errorCode = runCMake(env.build_dir, [
+                  CMAKE_BUILD_TYPE: 'Debug',
+                  CMAKE_EXPORT_COMPILE_COMMANDS: 'ON',
+                  BUILD_UNIT_TESTS: 'ON',
+                  MEASURE_COVERAGE: 'ON',
+                  CMAKE_INSTALL_PREFIX: "/home/rene/install/usr",
+                  LOCAL_BUILD: 'ON',
+                  SCRIPTS_DIR: '/home/rene/cmake-scripts'
+                ],
+                "Ninja",
+                [
+                  "ninja clean",
+                  "ninja"
+                ])
+                if (haveErrors(errorCode)) {
+                  echo "Failure building: ${env.errorCode}"
+                  currentBuild.result = 'FAILURE'
+                }
+              } else {
+                def errorCode = runCMake(env.build_dir, [
+                  CMAKE_BUILD_TYPE: 'Debug',
+                  CMAKE_EXPORT_COMPILE_COMMANDS: 'ON',
+                  BUILD_UNIT_TESTS: 'ON',
+                  MEASURE_COVERAGE: 'ON',
+                  CMAKE_INSTALL_PREFIX: "/home/rene/install/usr",
+                  LOCAL_BUILD: 'ON',
+                  SCRIPTS_DIR: '/home/rene/cmake-scripts'
+                ],
+                "Unix Makefiles",
+                [
+                  "make clean",
+                  "make"
+                ])
+                if (haveErrors(errorCode)) {
+                  echo "Failure building: ${env.errorCode}"
+                  currentBuild.result = 'FAILURE'
+                }
               }
             }
           }
