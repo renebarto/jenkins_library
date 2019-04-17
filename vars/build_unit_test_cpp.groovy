@@ -241,7 +241,7 @@ def call(body) {
                 "Ninja",
                 [
                   "ninja clean",
-                  "ninja"
+                  "ninja",
                   "ninja dpkg"
                 ])
                 if (haveErrors(errorCode)) {
