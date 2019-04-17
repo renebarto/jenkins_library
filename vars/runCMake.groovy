@@ -10,7 +10,7 @@ def call(String build_dir, Map parameters, String generator, List makeCommands) 
     return errorCode
   }
 
-  def parameterString = "-G\"${generator}\""
+  def parameterString = "-G \"${generator}\""
   parameters.each{ k, v -> parameterString= "${parameterString} -D${k}=${v}" }
   parameterString = parameterString.trim()
 
