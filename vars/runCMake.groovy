@@ -19,13 +19,14 @@ def call(String build_dir, Map parameters, String generator, List makeCommands) 
   def makeCommandsString = ""
   makeCommands.each{ makeCommandsString = "${makeCommandsString}\n$it" }
 
-  errorCode = runCommand("#!/bin/bash\nset -e\npushd ${build_dir}\ncmake .. -G \"${generator}\" ${parameterString}${makeCommandsString}\npopd > ${commandFile}")
+  errorCode = runCommand("#!/bin/bash\nset -e\npushd ${build_dir}\ncmake .. -G \"${generator}\" ${parameterString}${makeCommandsString}\npopd")
   if (haveErrors(errorCode)) {
     return errorCode
   }
-  errorCode = makeExecutable(commandFile)
-  if (haveErrors(errorCode)) {
-    return errorCode
-  }
-  return runCommand("${commandFile}")
+  // errorCode = makeExecutable(commandFile)
+  // if (haveErrors(errorCode)) {
+  //   return errorCode
+  // }
+  // return runCommand("${commandFile}")
+  return 0
 }
