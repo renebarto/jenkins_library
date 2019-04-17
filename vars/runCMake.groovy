@@ -11,7 +11,7 @@ def call(String build_dir, Map parameters, String generator, List makeCommands) 
   }
 
   def parameterString = "-G\"${generator}\""
-  parameters.each{ k, v -> parameterString= "${parameterString} D${k}=${v}" }
+  parameters.each{ k, v -> parameterString= "${parameterString} -D${k}=${v}" }
   parameterString = parameterString.trim()
 
   def commandFile = "${WORKSPACE}/command_.sh"
