@@ -16,8 +16,8 @@ def call(String build_dir, Map parameters, String generator, List makeCommands) 
 
   def commandFile = "${WORKSPACE}/command_.sh"
 
-  def makeCommandsString = "-G\"${generator}\" "
-  makeCommands.each{ makeCommandsString = "${makeCommandsString}\n$it" }
+  def makeCommandsString = "-G\"${generator}\""
+  makeCommands.each{ makeCommandsString = "${makeCommandsString} $it" }
 
   errorCode = runCommand("#!/bin/bash\nset -e\necho \"pushd ${build_dir}\ncmake .. ${parameterString}${makeCommandsString}\npopd\" > ${commandFile}")
   if (haveErrors(errorCode)) {
