@@ -10,7 +10,7 @@ def call(String build_dir, Map parameters, String generator, List makeCommands) 
     return errorCode
   }
 
-  def parameterString = "-G \"${generator}\""
+  def parameterString = ""
   parameters.each{ k, v -> parameterString= "${parameterString} -D${k}=${v}" }
   parameterString = parameterString.trim()
 
@@ -19,7 +19,7 @@ def call(String build_dir, Map parameters, String generator, List makeCommands) 
   def makeCommandsString = ""
   makeCommands.each{ makeCommandsString = "${makeCommandsString}\n$it" }
 
-  errorCode = runCommand("#!/bin/bash\nset -e\necho \"pushd ${build_dir}\ncmake .. ${parameterString}${makeCommandsString}\npopd\" > ${commandFile}")
+  errorCode = runCommand("#!/bin/bash\nset -e\npushd ${build_dir}\ncmake .. -G \"${generator}\" ${parameterString}${makeCommandsString}\npopd > ${commandFile}")
   if (haveErrors(errorCode)) {
     return errorCode
   }
