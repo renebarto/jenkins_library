@@ -95,6 +95,7 @@ def call(body) {
                   '--language=c++',
                   '--xml-version=2',
                   '--inline-suppr',
+                  '-i source/components/remoting'
                   'source',
                 ],
                 "${WORKSPACE}/cppcheck-results", "cppcheck.xml")
