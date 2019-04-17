@@ -261,10 +261,10 @@ def call(body) {
                   "make",
                   "make dpkg"
                 ])
-              }
-              if (haveErrors(errorCode)) {
-                echo "Failure building: ${env.errorCode}"
-                currentBuild.result = 'FAILURE'
+                if (haveErrors(errorCode)) {
+                  echo "Failure building: ${errorCode}"
+                  currentBuild.result = 'FAILURE'
+                }
               }
             }
             if (needToBuild()) {
