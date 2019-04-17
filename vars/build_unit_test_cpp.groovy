@@ -230,17 +230,38 @@ def call(body) {
         steps {
           script {
             if (needToBuild()) {
-              def errorCode = runCMake(build_dir, [
-                CMAKE_BUILD_TYPE: 'Release',
-                CMAKE_INSTALL_PREFIX: "/home/rene/install/usr",
-                CMAKE_EXPORT_COMPILE_COMMANDS: 'ON',
-                BUILD_UNIT_TESTS: 'ON',
-              ],
-              [
-                "make clean",
-                "make",
-                "make dpkg"
-              ])
+              env.build_dir = "${WORKSPACE}/build"
+              if (env.with_ninja == "true") {
+                def errorCode = runCMake(build_dir, [
+                  CMAKE_BUILD_TYPE: 'Release',
+                  CMAKE_INSTALL_PREFIX: "/home/rene/install/usr",
+                  CMAKE_EXPORT_COMPILE_COMMANDS: 'ON',
+                  BUILD_UNIT_TESTS: 'ON',
+                ],
+                "Ninja",
+                [
+                  "ninja clean",
+                  "ninja"
+                  "ninja dpkg"
+                ])
+                if (haveErrors(errorCode)) {
+                  echo "Failure building: ${env.errorCode}"
+                  currentBuild.result = 'FAILURE'
+                }
+              } else {
+                def errorCode = runCMake(build_dir, [
+                  CMAKE_BUILD_TYPE: 'Release',
+                  CMAKE_INSTALL_PREFIX: "/home/rene/install/usr",
+                  CMAKE_EXPORT_COMPILE_COMMANDS: 'ON',
+                  BUILD_UNIT_TESTS: 'ON',
+                ],
+                "Unix Makefiles",
+                [
+                  "make clean",
+                  "make",
+                  "make dpkg"
+                ])
+              }
               if (haveErrors(errorCode)) {
                 echo "Failure building: ${env.errorCode}"
                 currentBuild.result = 'FAILURE'
