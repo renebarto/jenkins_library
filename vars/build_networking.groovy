@@ -120,8 +120,7 @@ def call(body) {
                   threshold: 1, 
                   type: 'TOTAL', 
                   unstable: false
-                ]], 
-                referenceJobName: 'networking'
+                ]]
               )
             }
           }
