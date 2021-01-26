@@ -93,6 +93,7 @@ def call(body) {
                 [
                   '--enable=warning,performance,portability,style',
                   '--language=c++',
+				  '--library=googletest',
                   '--xml-version=2',
                   '--inline-suppr',
                   '-i code/external',
@@ -117,7 +118,7 @@ def call(body) {
               publishIssues(
                 issues: [cppcheckIssues], 
                 qualityGates: [[
-                  threshold: 1, 
+                  threshold: 100, 
                   type: 'TOTAL', 
                   unstable: false
                 ]]
