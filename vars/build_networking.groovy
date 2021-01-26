@@ -20,11 +20,6 @@ def call(body) {
   def util =  new util(this)
   pipeline {
     agent any
-     {
-       node {
-         label "${config.label}"
-       }
-     }
     options {
       timeout (
         time: config.timeoutInHours,
