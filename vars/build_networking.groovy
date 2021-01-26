@@ -20,11 +20,11 @@ def call(body) {
   def util =  new util(this)
   pipeline {
     agent any
-    // {
-    //   node {
-    //     label "${config.label}"
-    //   }
-    // }
+     {
+       node {
+         label "${config.label}"
+       }
+     }
     options {
       timeout (
         time: config.timeoutInHours,
@@ -40,8 +40,15 @@ def call(body) {
         steps {
           script {
             env.with_ninja = config.with_ninja
-            if ((config.with_ninja == null) || (config.with_ninja == "")) {
+            if ((config.with_ninja?.trim()) {
               env.with_ninja = "false"
+            }
+            env.tests = config.tests
+            if ((config.tests?.trim()) {
+              env.tests = [
+                'osal-test',
+                'utility-test',
+              ]
             }
           }
         }
@@ -88,80 +95,74 @@ def call(body) {
       stage('Static analysis') {
         steps {
           script {
-            if (needToBuild()) {
-              runCppCheck(
-                [
-                  '--enable=warning,performance,portability,style',
-                  '--language=c++',
-				  '--library=googletest',
-                  '--xml-version=2',
-                  '--inline-suppr',
-                  '-i code/external',
-                  'code',
-                ],
-                "${WORKSPACE}/cppcheck-results", "cppcheck.xml")
-            }
+            runCppCheck(
+            [
+                '--enable=warning,performance,portability,style',
+                '--language=c++',
+                '--library=googletest',
+                '--xml-version=2',
+                '--inline-suppr',
+                '-i code/external',
+                'code',
+              ],
+              "${WORKSPACE}/cppcheck-results", "cppcheck.xml")
           }
         }
       }
       stage('Report static analysis results') {
         steps {
           script {
-            if (needToBuild()) {
-              def cppcheckIssues = scanForIssues(
-                sourceCodeEncoding: 'US-ASCII', 
-                tool: cppCheck(
-                  pattern: 'cppcheck-results/**/*.xml', 
-                  reportEncoding: 'US-ASCII'
-                )
+            def cppcheckIssues = scanForIssues(
+              sourceCodeEncoding: 'US-ASCII', 
+              tool: cppCheck(
+                pattern: 'cppcheck-results/**/*.xml', 
+                reportEncoding: 'US-ASCII'
               )
-              publishIssues(
-                issues: [cppcheckIssues], 
-                qualityGates: [[
-                  threshold: 100, 
-                  type: 'TOTAL', 
-                  unstable: false
-                ]]
-              )
-            }
+            )
+            publishIssues(
+              issues: [cppcheckIssues], 
+              qualityGates: [[
+                threshold: 100, 
+                type: 'TOTAL', 
+                unstable: false
+              ]]
+            )
           }
         }
       }
       stage('Build') {
         steps {
           script {
-            if (needToBuild()) {
-              env.build_dir = "${WORKSPACE}/build"
-              if (env.with_ninja == "true") {
-                def errorCode = runCMake(env.build_dir, [
-                  CMAKE_BUILD_TYPE: 'Debug',
-                  CMAKE_EXPORT_COMPILE_COMMANDS: 'ON',
-                  CMAKE_INSTALL_PREFIX: "/home/rene/install/usr",
-                ],
-                "Ninja",
-                [
-                  "ninja clean",
-                  "ninja"
-                ])
-                if (haveErrors(errorCode)) {
-                  echo "Failure building: ${env.errorCode}"
-                  currentBuild.result = 'FAILURE'
-                }
-              } else {
-                def errorCode = runCMake(env.build_dir, [
-                  CMAKE_BUILD_TYPE: 'Debug',
-                  CMAKE_EXPORT_COMPILE_COMMANDS: 'ON',
-                  CMAKE_INSTALL_PREFIX: "/home/rene/install/usr",
-                ],
-                "Unix Makefiles",
-                [
-                  "make clean",
-                  "make"
-                ])
-                if (haveErrors(errorCode)) {
-                  echo "Failure building: ${env.errorCode}"
-                  currentBuild.result = 'FAILURE'
-                }
+            env.build_dir = "${WORKSPACE}/build"
+            if (env.with_ninja == "true") {
+              def errorCode = runCMake(env.build_dir, [
+                CMAKE_BUILD_TYPE: 'Debug',
+                CMAKE_EXPORT_COMPILE_COMMANDS: 'ON',
+                CMAKE_INSTALL_PREFIX: "/home/rene/install/usr",
+              ],
+              "Ninja",
+              [
+                "ninja clean",
+                "ninja"
+              ])
+              if (haveErrors(errorCode)) {
+                echo "Failure building: ${env.errorCode}"
+                currentBuild.result = 'FAILURE'
+              }
+            } else {
+              def errorCode = runCMake(env.build_dir, [
+                CMAKE_BUILD_TYPE: 'Debug',
+                CMAKE_EXPORT_COMPILE_COMMANDS: 'ON',
+                CMAKE_INSTALL_PREFIX: "/home/rene/install/usr",
+              ],
+              "Unix Makefiles",
+              [
+                "make clean",
+                "make"
+              ])
+              if (haveErrors(errorCode)) {
+                echo "Failure building: ${env.errorCode}"
+                currentBuild.result = 'FAILURE'
               }
             }
           }
@@ -170,8 +171,9 @@ def call(body) {
       stage('Test') {
         steps {
           script {
-            if (needToBuild()) {
-              runTests("${WORKSPACE}/output/Linux/Debug/bin/osal-test", "${WORKSPACE}/test-results", "networking.test.xml")
+            env.tests.each {
+              println "Running test: $it"
+              runTests("${WORKSPACE}/output/Linux/Debug/bin/$it", "${WORKSPACE}/test-results", "$it.xml")
             }
           }
         }
@@ -179,17 +181,14 @@ def call(body) {
       stage('Report test results') {
         steps {
           script {
-            if (needToBuild()) {
-              analyzeTestResults("test-results")
-            }
+            analyzeTestResults("test-results")
           }
         }
       }
       stage('Deploy') {
         steps {
           script {
-            if (needToBuild()) {
-            }
+			echo "Deploy"
           }
         }
       }
