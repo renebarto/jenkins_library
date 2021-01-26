@@ -169,7 +169,7 @@ def call(body) {
           script {
             env.tests.each {
               println "Running test: $it"
-              runTests("${WORKSPACE}/output/Linux/Debug/bin/$it", "${WORKSPACE}/test-results", "$it.xml")
+              //runTests("${WORKSPACE}/output/Linux/Debug/bin/$it", "${WORKSPACE}/test-results", "$it.xml")
             }
           }
         }
