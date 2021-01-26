@@ -15,6 +15,7 @@ def call(body) {
     timeoutInHours = 4
     recipients = ''
     with_ninja = false    // Build with Ninja
+	tests = []
   }
   */
   def util =  new util(this)
@@ -35,11 +36,11 @@ def call(body) {
         steps {
           script {
             env.with_ninja = config.with_ninja
-            if ((config.with_ninja?.trim()) {
+            if (config.with_ninja?.trim()) {
               env.with_ninja = "false"
             }
             env.tests = config.tests
-            if ((config.tests?.trim()) {
+            if (config.tests?.trim()) {
               env.tests = [
                 'osal-test',
                 'utility-test',
