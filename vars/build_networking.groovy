@@ -1,4 +1,7 @@
 import common.util
+
+tests = []
+
 def call(body) {
   // evaluate the body block, and collect configuration into the object
   def config = [:]
@@ -39,9 +42,9 @@ def call(body) {
             if (config.with_ninja?.trim()) {
               env.with_ninja = "false"
             }
-            env.tests = config.tests
+            tests = config.tests
             if (config.tests?.trim()) {
-              env.tests = [
+              tests = [
                 'osal-test',
                 'utility-test',
               ]
@@ -167,7 +170,7 @@ def call(body) {
       stage('Test') {
         steps {
           script {
-            env.tests.each {
+            tests.each {
               println "Running test: $it"
               //runTests("${WORKSPACE}/output/Linux/Debug/bin/$it", "${WORKSPACE}/test-results", "$it.xml")
             }
