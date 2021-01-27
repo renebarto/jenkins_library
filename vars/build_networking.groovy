@@ -1,6 +1,6 @@
 import common.util
 
-@Field def tests = [:]
+@groovy.transform.Field def tests = [:]
 
 def call(body) {
   // evaluate the body block, and collect configuration into the object
