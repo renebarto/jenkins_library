@@ -1,5 +1,5 @@
 def call(String resultsDir) {
-  xunit( 
+  xunit 
     thresholds: [
       failed(
         failureThreshold: '0', 
@@ -7,14 +7,13 @@ def call(String resultsDir) {
       )
     ], 
     tools: [
-      UnitTest(
-        deleteOutputFiles: true, 
-        failIfNotNew: true, 
+      GoogleTest(
+        deleteOutputFiles: false, 
+        excludesPattern: '', 
+        failIfNotNew: false, 
         pattern: "${resultsDir}/**/*.xml", 
-        skipNoTestFiles: false, 
         stopProcessingIfError: true
       )
-    ]
-  )
+    ] 
   return true
 }
