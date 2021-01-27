@@ -168,8 +168,9 @@ def call(body) {
               'utility-test',
             ]
             tests.each {
-              println "Running test: $it"
-              runTests("${WORKSPACE}/output/Linux/Debug/bin/$it", "${WORKSPACE}/test-results", "$it.xml")
+			  def testName = $it
+              println "Running test: ${testName}"
+              runTests("${WORKSPACE}/output/Linux/Debug/bin/${testName}", "${WORKSPACE}/test-results", "${testName}.xml")
             }
           }
         }
