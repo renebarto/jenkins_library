@@ -1,6 +1,6 @@
 import common.util
 
-@groovy.transform.Field def tests = [:]
+@groovy.transform.Field tests = [:]
 
 def call(body) {
   // evaluate the body block, and collect configuration into the object
@@ -186,7 +186,7 @@ def call(body) {
               failed(failureNewThreshold: '0', failureThreshold: '0', unstableNewThreshold: '0', unstableThreshold: '0')
             ], 
             tools: [
-              GoogleTest(deleteOutputFiles: false, excludesPattern: '', pattern: '"${resultsDir}/**/*.xml"', skipNoTestFiles: true, stopProcessingIfError: true)
+              GoogleTest(deleteOutputFiles: false, excludesPattern: '', pattern: '"test-results/**/*.xml"', skipNoTestFiles: true, stopProcessingIfError: true)
             ]
           )
         }
