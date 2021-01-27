@@ -1,7 +1,5 @@
 import common.util
 
-@groovy.transform.Field tests = [:]
-
 def call(body) {
   // evaluate the body block, and collect configuration into the object
   def config = [:]
@@ -19,7 +17,6 @@ def call(body) {
     timeoutInHours = 4
     recipients = ''
     with_ninja = false    // Build with Ninja
-	tests = []
   }
   */
   def util =  new util(this)
@@ -43,13 +40,6 @@ def call(body) {
             env.with_ninja = config.with_ninja
             if (config.with_ninja?.trim()) {
               env.with_ninja = "false"
-            }
-            tests = config.tests
-            if (config.tests?.trim()) {
-              tests = [
-                'osal-test',
-                'utility-test',
-              ]
             }
           }
         }
@@ -172,9 +162,14 @@ def call(body) {
       stage('Test') {
         steps {
           script {
+            tests = [
+              'osal-test',
+              'core-test',
+              'utility-test',
+            ]
             tests.each {
               println "Running test: $it"
-              //runTests("${WORKSPACE}/output/Linux/Debug/bin/$it", "${WORKSPACE}/test-results", "$it.xml")
+              runTests("${WORKSPACE}/output/Linux/Debug/bin/$it", "${WORKSPACE}/test-results", "$it.xml")
             }
           }
         }
