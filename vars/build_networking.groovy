@@ -31,6 +31,7 @@ def call(body) {
         unit: 'HOURS'
       )
       ansiColor('xterm')
+	  timestamps ()
     }
     environment {
       errorCode = 0
