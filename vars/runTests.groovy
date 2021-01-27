@@ -7,5 +7,5 @@ def call(String executable, String resultsDir, String resultsFile) {
   if (haveErrors(errorCode)) {
     return errorCode
   }
-  return runCommand("${executable} --xml ${resultsDir}/${resultsFile}")
+  return runCommand("${executable} --gtest_output=xml:${resultsDir}/${resultsFile}")
 }
