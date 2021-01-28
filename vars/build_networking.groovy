@@ -162,8 +162,9 @@ def call(body) {
       stage('Test') {
         steps {
           script {
-		    makeDir(resultsDir)
-			runCommand("rm -rf ${resultsDir}/*")
+		    env.resultsDir = 'test-results'
+		    makeDir(env.resultsDir)
+			runCommand("rm -rf ${env.resultsDir}/*")
             tests = [
               'osal-test',
               'core-test',
@@ -171,7 +172,7 @@ def call(body) {
             ]
             tests.each { testName ->
               println "Running test: ${testName}"
-              runTests("${WORKSPACE}/output/Linux/Debug/bin/${testName}", "${WORKSPACE}/test-results", "${testName}.xml")
+              runTests("${WORKSPACE}/output/Linux/Debug/bin/${testName}", "${WORKSPACE}/${env.resultsDir}", "${testName}.xml")
             }
           }
         }
@@ -183,7 +184,7 @@ def call(body) {
               failed(failureNewThreshold: '0', failureThreshold: '0', unstableNewThreshold: '0', unstableThreshold: '0')
             ], 
             tools: [
-              GoogleTest(deleteOutputFiles: false, excludesPattern: '', pattern: 'test-results/*.xml', skipNoTestFiles: true, stopProcessingIfError: true)
+              GoogleTest(deleteOutputFiles: false, excludesPattern: '', pattern: "${env.resultsDir}/*.xml", skipNoTestFiles: true, stopProcessingIfError: true)
             ]
           )
         }
