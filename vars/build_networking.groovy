@@ -162,6 +162,8 @@ def call(body) {
       stage('Test') {
         steps {
           script {
+		    makeDir(resultsDir)
+			runCommand("rm -rf ${resultsDir}/*")
             tests = [
               'osal-test',
               'core-test',
@@ -181,7 +183,7 @@ def call(body) {
               failed(failureNewThreshold: '0', failureThreshold: '0', unstableNewThreshold: '0', unstableThreshold: '0')
             ], 
             tools: [
-              GoogleTest(deleteOutputFiles: false, excludesPattern: '', pattern: '"test-results/*.xml"', skipNoTestFiles: true, stopProcessingIfError: true)
+              GoogleTest(deleteOutputFiles: false, excludesPattern: '', pattern: 'test-results/*.xml', skipNoTestFiles: true, stopProcessingIfError: true)
             ]
           )
         }
