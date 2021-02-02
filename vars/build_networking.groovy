@@ -200,7 +200,6 @@ def call(body) {
         steps {
           script {
             currentBuild.description = "${env.node_name}<br/>${env.current_commit_hash}<br/>${env.buildID}"
-            currentBuild.result = 'SUCCESS'
           }
         }
       }
