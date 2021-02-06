@@ -16,6 +16,7 @@ def call(body) {
     branch = ''
     timeoutInHours = 4
     recipients = ''
+	tests = ''
     with_ninja = false    // Build with Ninja
   }
   */
@@ -48,6 +49,10 @@ def call(body) {
             if (config.branch?.trim()) {
               env.branch = "master"
             }
+			env.tests = config.tests.trim()
+			if (config.tests?.trim()) {
+				env.tests = 'osal-test,core-test,tracing-test,utility-test'
+			}
           }
         }
       }
@@ -162,12 +167,13 @@ def call(body) {
             env.resultsDir = 'test-results'
             makeDir(env.resultsDir)
             runCommand("rm -rf ${env.resultsDir}/*")
-            tests = [
-              'osal-test',
-              'core-test',
-              'utility-test',
-            ]
-            tests.each { testName ->
+			def testList = env.tests.trim().split(',').collect{it.trim()}
+            //tests = [
+            //  'osal-test',
+            //  'core-test',
+            //  'utility-test',
+            //]
+            testList.each { testName ->
               println "Running test: ${testName}"
               runTests("${WORKSPACE}/output/Linux/Debug/bin/${testName}", "${WORKSPACE}/${env.resultsDir}", "${testName}.xml")
             }
