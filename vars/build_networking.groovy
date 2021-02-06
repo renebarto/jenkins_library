@@ -51,11 +51,11 @@ def call(body) {
       stage('Checkout') {
         steps {
           script {
-            echo "Checking out repository: https://github.com/renebarto/networking/ branch: https://github.com/renebarto/networking/"       
+            echo "Checking out repository: https://github.com/renebarto/networking/ branch: ${branch}"       
             checkout([
               $class: 'GitSCM', 
               branches: [[
-                name: "refs/heads/https://github.com/renebarto/networking/"
+                name: "refs/heads/${branch}"
               ]], 
               doGenerateSubmoduleConfigurations: false, 
               extensions: [], 
