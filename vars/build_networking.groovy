@@ -53,6 +53,7 @@ def call(body) {
 			if (config.tests?.trim()) {
 				env.tests = 'osal-test,core-test,tracing-test,utility-test'
 			}
+            echo "Running tests ${env.tests}"           
           }
         }
       }
