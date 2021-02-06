@@ -1,14 +1,6 @@
 def call(String build_dir, Map parameters, String generator, List makeCommands) {
-  def errorCode = removeDir(build_dir)
-  if (haveErrors(errorCode)) {
-    echo "Failure removing directory ${build_dir}: ${errorCode}"
-    return errorCode
-  }
-  errorCode = makeDir(build_dir)
-  if (haveErrors(errorCode)) {
-    echo "Failure creating directory ${build_dir}: ${errorCode}"
-    return errorCode
-  }
+  removeDir(build_dir)
+  makeDir(build_dir)
 
   def parameterString = ""
   parameters.each{ k, v -> parameterString= "${parameterString} -D${k}=${v}" }
@@ -19,14 +11,5 @@ def call(String build_dir, Map parameters, String generator, List makeCommands) 
   def makeCommandsString = ""
   makeCommands.each{ makeCommandsString = "${makeCommandsString}\n$it" }
 
-  errorCode = runCommand("#!/bin/bash\nset -e\npushd ${build_dir}\ncmake .. -G \"${generator}\" ${parameterString}${makeCommandsString}\npopd")
-  if (haveErrors(errorCode)) {
-    return errorCode
-  }
-  // errorCode = makeExecutable(commandFile)
-  // if (haveErrors(errorCode)) {
-  //   return errorCode
-  // }
-  // return runCommand("${commandFile}")
-  return 0
+  runCommand("#!/bin/bash\nset -e\npushd ${build_dir}\ncmake .. -G \"${generator}\" ${parameterString}${makeCommandsString}\npopd")
 }

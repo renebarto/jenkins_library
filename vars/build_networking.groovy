@@ -28,7 +28,6 @@ def call(body) {
         unit: 'HOURS'
       )
       ansiColor('xterm')
-	  timestamps ()
     }
     environment {
       errorCode = 0
@@ -41,16 +40,22 @@ def call(body) {
             if (config.with_ninja?.trim()) {
               env.with_ninja = "false"
             }
+            if (config.with_ninja == "true") {
+              echo "Using Ninja to build"           
+            } else {
+              echo "Not using Ninja to build"           
+            }
           }
         }
       }
       stage('Checkout') {
         steps {
           script {
+            echo "Checking out repository: https://github.com/renebarto/networking/ branch: https://github.com/renebarto/networking/"       
             checkout([
               $class: 'GitSCM', 
               branches: [[
-                name: "refs/heads/${config.branch}"
+                name: "refs/heads/https://github.com/renebarto/networking/"
               ]], 
               doGenerateSubmoduleConfigurations: false, 
               extensions: [], 
@@ -65,21 +70,15 @@ def call(body) {
       stage('Determine baseline') {
         steps {
           script {
-            env.timestamp = new Date().format('yyyy-MM-dd_HH-mm-ss')
-            def (errorCode, output) = getCommitHash('HEAD')
-            if (haveErrors(errorCode)) {
-              echo "Failure running getCommitHash ${errorCode}"
-              currentBuild.result = 'FAILURE'
-            }
-            env.current_commit_hash = output
-            env.buildID = "${env.current_commit_hash}_${env.timestamp}_${currentBuild.number}"
+            env.timestampStart = new Date().format('yyyy-MM-dd_HH-mm-ss')
+            echo "Start time: env.timestampStart"           
+            env.current_commit_hash = getCommitHash('HEAD')
+            env.buildID = "${env.current_commit_hash}_${env.timestampStart}_${currentBuild.number}"
+            echo "Build ID: ${env.buildID}"
 
-            (errorCode, output) = getLastCommitSummary()
-            if (haveErrors(errorCode)) {
-              echo "Failure running getLastCommitSummary ${errorCode}"
-              currentBuild.result = 'FAILURE'
-            }
+            def output = getLastCommitSummary()
             echo "Last commit: ${output}"
+            echo "Current build result: ${currentBuild.result}"
           }
         }
       }
@@ -88,15 +87,16 @@ def call(body) {
           script {
             runCppCheck(
             [
-                '--enable=warning,performance,portability,style',
-                '--language=c++',
-                '--library=googletest',
-                '--xml-version=2',
-                '--inline-suppr',
-                '-i code/external',
-                'code',
-              ],
-              "${WORKSPACE}/cppcheck-results", "cppcheck.xml")
+              '--enable=warning,performance,portability,style',
+              '--language=c++',
+              '--library=googletest',
+              '--xml-version=2',
+              '--inline-suppr',
+              '-i code/external',
+              'code',
+            ],
+            "${WORKSPACE}/cppcheck-results", "cppcheck.xml")
+            echo "Current build result: ${currentBuild.result}"
           }
         }
       }
@@ -118,6 +118,7 @@ def call(body) {
                 unstable: false
               ]]
             )
+            echo "Current build result: ${currentBuild.result}"
           }
         }
       }
@@ -126,7 +127,7 @@ def call(body) {
           script {
             env.build_dir = "${WORKSPACE}/build"
             if (env.with_ninja == "true") {
-              def errorCode = runCMake(env.build_dir, [
+              runCMake(env.build_dir, [
                 CMAKE_BUILD_TYPE: 'Debug',
                 CMAKE_EXPORT_COMPILE_COMMANDS: 'ON',
                 CMAKE_INSTALL_PREFIX: "/home/rene/install/usr",
@@ -136,12 +137,8 @@ def call(body) {
                 "ninja clean",
                 "ninja"
               ])
-              if (haveErrors(errorCode)) {
-                echo "Failure building: ${env.errorCode}"
-                currentBuild.result = 'FAILURE'
-              }
             } else {
-              def errorCode = runCMake(env.build_dir, [
+              runCMake(env.build_dir, [
                 CMAKE_BUILD_TYPE: 'Debug',
                 CMAKE_EXPORT_COMPILE_COMMANDS: 'ON',
                 CMAKE_INSTALL_PREFIX: "/home/rene/install/usr",
@@ -151,20 +148,17 @@ def call(body) {
                 "make clean",
                 "make"
               ])
-              if (haveErrors(errorCode)) {
-                echo "Failure building: ${env.errorCode}"
-                currentBuild.result = 'FAILURE'
-              }
             }
+            echo "Current build result: ${currentBuild.result}"
           }
         }
       }
       stage('Test') {
         steps {
           script {
-		    env.resultsDir = 'test-results'
-		    makeDir(env.resultsDir)
-			runCommand("rm -rf ${env.resultsDir}/*")
+            env.resultsDir = 'test-results'
+            makeDir(env.resultsDir)
+            runCommand("rm -rf ${env.resultsDir}/*")
             tests = [
               'osal-test',
               'core-test',
@@ -174,25 +168,29 @@ def call(body) {
               println "Running test: ${testName}"
               runTests("${WORKSPACE}/output/Linux/Debug/bin/${testName}", "${WORKSPACE}/${env.resultsDir}", "${testName}.xml")
             }
+            echo "Current build result: ${currentBuild.result}"
           }
         }
       }
       stage('Report test results') {
         steps {
-          xunit (
-            thresholds: [
-              failed(failureNewThreshold: '0', failureThreshold: '0', unstableNewThreshold: '0', unstableThreshold: '0')
-            ], 
-            tools: [
-              GoogleTest(deleteOutputFiles: false, excludesPattern: '', pattern: "${env.resultsDir}/*.xml", skipNoTestFiles: true, stopProcessingIfError: true)
-            ]
-          )
+          script {
+            xunit (
+              thresholds: [
+                failed(failureNewThreshold: '0', failureThreshold: '0', unstableNewThreshold: '0', unstableThreshold: '0')
+              ], 
+              tools: [
+                GoogleTest(deleteOutputFiles: false, excludesPattern: '', pattern: "${env.resultsDir}/*.xml", skipNoTestFiles: true, stopProcessingIfError: true)
+              ]
+            )
+            echo "Current build result: ${currentBuild.result}"
         }
       }
       stage('Deploy') {
         steps {
           script {
-			echo "Deploy"
+            echo "Deploy"
+            echo "Current build result: ${currentBuild.result}"
           }
         }
       }
@@ -200,6 +198,7 @@ def call(body) {
         steps {
           script {
             currentBuild.description = "${env.node_name}<br/>${env.current_commit_hash}<br/>${env.buildID}"
+            echo "Current build result: ${currentBuild.result}"
           }
         }
       }

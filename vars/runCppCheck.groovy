@@ -1,15 +1,9 @@
 def call(List options, String resultsDir, String resultsFile) {
-  def errorCode = makeDir(resultsDir)
-  if (haveErrors(errorCode)) {
-    return errorCode
-  }
-  errorCode = runCommand("rm -rf ${resultsDir}/*")
-  if (haveErrors(errorCode)) {
-    return errorCode
-  }
+  makeDir(resultsDir)
+  runCommand("rm -rf ${resultsDir}/*")
   def parameterString = ""
   options.each{ parameterString = "${parameterString}$it " }
   parameterString = parameterString.trim()
 
-  return runCommand("cppcheck ${parameterString} 2>${resultsDir}/${resultsFile}")
+  runCommand("cppcheck ${parameterString} 2>${resultsDir}/${resultsFile}")
 }

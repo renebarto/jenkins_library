@@ -1,3 +1,9 @@
 def call(String path) {
-  return runCommand("mkdir -p ${path}")
+  try {
+    runCommand("mkdir -p ${path}")
+  }
+  catch (Exception ex) {
+    echo "Cannot create directory ${path}: ${ex}"
+	throw ex
+  }
 }
