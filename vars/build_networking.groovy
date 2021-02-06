@@ -45,6 +45,9 @@ def call(body) {
             } else {
               echo "Not using Ninja to build"           
             }
+            if (config.branch?.trim()) {
+              env.branch = "master"
+            }
           }
         }
       }
