@@ -49,7 +49,7 @@ def call(body) {
             if (config.branch?.trim()) {
               env.branch = "master"
             }
-			env.tests = config.tests.trim()
+			env.tests = config.tests
 			if (config.tests?.trim()) {
 				env.tests = 'osal-test,core-test,tracing-test,utility-test'
 			}
