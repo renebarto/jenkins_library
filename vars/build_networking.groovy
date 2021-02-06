@@ -184,6 +184,7 @@ def call(body) {
               ]
             )
             echo "Current build result: ${currentBuild.result}"
+          }
         }
       }
       stage('Deploy') {
