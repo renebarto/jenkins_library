@@ -54,7 +54,7 @@ def call(body) {
             }
             env.tests = config.tests
             if (!config.tests?.trim()) {
-                env.tests = 'osal-test,core-test,tracing-test,utility-test'
+                env.tests = 'osal-test,core-test,tracing-test,utility-test,network-osal-test,network-test,json-test,http-test'
                 echo "Running default tests"
             }
             echo "Running tests ${env.tests}"           
