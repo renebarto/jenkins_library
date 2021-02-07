@@ -16,7 +16,7 @@ def call(body) {
     branch = ''
     timeoutInHours = 4
     recipients = ''
-	tests = ''
+    tests = ''
     with_ninja = false    // Build with Ninja
   }
   */
@@ -38,21 +38,24 @@ def call(body) {
         steps {
           script {
             env.with_ninja = config.with_ninja
-            if (config.with_ninja?.trim()) {
+            if (!config.with_ninja?.trim()) {
               env.with_ninja = "false"
+              echo "Failling back non Ninja build"
             }
             if (config.with_ninja == "true") {
               echo "Using Ninja to build"           
             } else {
               echo "Not using Ninja to build"           
             }
-            if (config.branch?.trim()) {
+            if (!config.branch?.trim()) {
               env.branch = "master"
+              echo "Failling back to master branch"
             }
-			env.tests = config.tests
-			if (config.tests?.trim()) {
-				env.tests = 'osal-test,core-test,tracing-test,utility-test'
-			}
+            env.tests = config.tests
+            if (!config.tests?.trim()) {
+                env.tests = 'osal-test,core-test,tracing-test,utility-test'
+                echo "Running default tests"
+            }
             echo "Running tests ${env.tests}"           
           }
         }
@@ -168,7 +171,7 @@ def call(body) {
             env.resultsDir = 'test-results'
             makeDir(env.resultsDir)
             runCommand("rm -rf ${env.resultsDir}/*")
-			def testList = env.tests.trim().split(',').collect{it.trim()}
+            def testList = env.tests.trim().split(',').collect{it.trim()}
             //tests = [
             //  'osal-test',
             //  'core-test',
