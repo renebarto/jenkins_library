@@ -17,7 +17,7 @@ def call(body) {
     timeoutInHours = 4
     recipients = ''
     tests = ''
-    with_ninja = false    // Build with Ninja
+    with_ninja = ''    // Build with Ninja
   }
   */
   def util =  new util(this)
@@ -40,16 +40,17 @@ def call(body) {
             env.with_ninja = config.with_ninja
             if (!config.with_ninja?.trim()) {
               env.with_ninja = "false"
-              echo "Failling back non Ninja build"
+              echo "Falling back non Ninja build"
             }
             if (config.with_ninja == "true") {
               echo "Using Ninja to build"           
             } else {
               echo "Not using Ninja to build"           
             }
+            env.branch = config.branch
             if (!config.branch?.trim()) {
               env.branch = "master"
-              echo "Failling back to master branch"
+              echo "Falling back to master branch"
             }
             env.tests = config.tests
             if (!config.tests?.trim()) {
